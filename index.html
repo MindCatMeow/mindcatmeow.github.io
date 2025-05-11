@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindCat | Personal Page</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+        
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transform: translate(-50%, -50%);
+            transition: transform 0.1s ease;
+        }
+        
+        .cursor::before, .cursor::after {
+            content: '';
+            position: absolute;
+            background: white;
+            transform: translate(-50%, -50%);
+        }
+        
+        .cursor::before {
+            width: 2px;
+            height: 30px;
+            top: 50%;
+            left: 50%;
+        }
+        
+        .cursor::after {
+            width: 30px;
+            height: 2px;
+            top: 50%;
+            left: 50%;
+        }
+        
+        .cursor-coords {
+            position: fixed;
+            color: white;
+            font-size: 12px;
+            font-family: Arial, sans-serif;
+            pointer-events: none;
+            z-index: 9999;
+            transform: translate(20px, 20px);
+            background: rgba(0,0,0,0.7);
+            padding: 2px 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+        
+        /* Header Section */
+        .header-container {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out forwards;
+            transition: transform 0.5s ease;
+        }
+        
+        .header-container:hover .header-image {
+            transform: scale(1.02);
+        }
+        
+        .header-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 80px;
+            align-items: center;
+        }
+        
+        .header-text {
+            font-size: 4rem;
+            font-weight: 800;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 1s ease-out 0.5s forwards;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            z-index: 3;
+        }
+        
+        .header-shadow {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+            z-index: 2;
+            filter: blur(10px);
+        }
+        
+        /* Main Content */
+        main {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 4;
+            background-color: #121212;
+        }
+        
+        section {
+            margin-bottom: 80px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, transparent, #ffffff, transparent);
+        }
+        
+        /* Info Boxes */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease-out;
+        }
+        
+        section.visible .info-grid {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.3s;
+        }
+        
+        .info-box {
+            background-color: #1e1e1e;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            border: 1px solid #333;
+        }
+        
+        .info-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+            border-color: #555;
+        }
+        
+        .info-box h3 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-box p {
+            font-family: Arial, sans-serif;
+            font-weight: normal;
+            line-height: 1.8;
+            color: #cccccc;
+        }
+        
+        /* Contact Button */
+        .contact-btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #333, #000);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            border: 2px solid #444;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .contact-btn:hover {
+            background: linear-gradient(135deg, #444, #111);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        
+        /* Social Links */
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 60px;
+        }
+        
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #222, #000);
+            color: #fff;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 2rem;
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 2px solid #333;
+        }
+        
+        .social-link:nth-child(1) {
+            animation: fadeInUp 0.8s ease-out 1s forwards;
+        }
+        
+        .social-link:nth-child(2) {
+            animation: fadeInUp 0.8s ease-out 1.3s forwards;
+        }
+        
+        .social-link:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border-color: #555;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #000;
+            color: #aaa;
+            text-align: center;
+            padding: 30px;
+            font-family: Arial, sans-serif;
+            font-size: 0.9rem;
+            border-top: 1px solid #333;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .header-text {
+                font-size: 3rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-text {
+                font-size: 2.5rem;
+                padding: 0 20px;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-link {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
+            }
+            
+            * {
+                cursor: default;
+            }
+            
+            .cursor, .cursor-coords {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .header-text {
+                font-size: 2rem;
+            }
+            
+            .header-overlay {
+                padding-bottom: 60px;
+            }
+            
+            .social-links {
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="cursor-coords"></div>
+    
+    <div class="header-container">
+        <img src="https://source.unsplash.com/random/1920x1080/?cat,night" alt="MindCat" class="header-image">
+        <div class="header-overlay">
+            <h1 class="header-text" id="animated-title">Привет! Я MindCat! :3</h1>
+            <a href="#contact" class="contact-btn">Контакты</a>
+        </div>
+        <div class="header-shadow"></div>
+    </div>
+    
+    <main>
+        <section id="about">
+            <h2>Обо Мне</h2>
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3><i class="fas fa-user"></i> Кто Я?</h3>
+                    <p>Творческая личность с увлечением к технологиям и искусству. Люблю создавать и делиться своими проектами.</p>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-heart"></i> Интересы</h3>
+                    <p>Программирование, дизайн.</p>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-bullseye"></i> Цели</h3>
+                    <p>Создавать интересные проекты.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="projects">
+            <h2>Мои Проекты</h2>
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3><i class="fas fa-paint-brush"></i> Творчество</h3>
+                    <p>Цифровое искусство и графический дизайн в различных стилях.</p>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-code"></i> Технологии</h3>
+                    <p>Веб-разработка и создание интерактивных проектов, совмещающих технологии и искусство.</p>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-users"></i> Коллаборации</h3>
+                    <p>Открыт к сотрудничеству с другими творческими людьми для реализации интересных идей.</p>
+                </div>
+            </div>
+        </section>
+        
+        <section id="contact">
+            <h2>Связь Со Мной</h2>
+            <div class="info-grid">
+                <div class="info-box">
+                    <h3><i class="fas fa-comment"></i> Контакты</h3>
+                    <p>Лучший способ связаться со мной - через Telegram. Отвечаю быстро на любые вопросы.</p>
+                    <a href="#footer" class="contact-btn">Написать</a>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-handshake"></i> Сотрудничество</h3>
+                    <p>Интересен любой вид сотрудничества: арт-проекты, технологические решения и другие идеи.</p>
+                    <a href="#footer" class="contact-btn">Предложить</a>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-star"></i> Поддержка</h3>
+                    <p>Если вам нравится мой контент, вы можете поддержать мои проекты и дальнейшее развитие.</p>
+                    <a href="#footer" class="contact-btn">Поддержать</a>
+                </div>
+            </div>
+        </section>
+        
+        <div class="social-links">
+            <a href="https://tiktok.com/@Youmindcat" class="social-link" target="_blank" title="TikTok">
+                <i class="fab fa-tiktok"></i>
+            </a>
+            <a href="https://t.me/ImMindCat" class="social-link" target="_blank" title="Telegram">
+                <i class="fab fa-telegram"></i>
+            </a>
+        </div>
+    </main>
+    
+    <footer id="footer">
+        &copy; 2025 MindCat. Все права защищены.
+    </footer>
+    
+    <script>
+        // Scroll animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('section');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1
+            });
+            
+            sections.forEach(section => {
+                observer.observe(section);
+            });
+            
+            // Preload header image
+            const headerImg = document.querySelector('.header-image');
+            if (headerImg) {
+                const img = new Image();
+                img.src = headerImg.src;
+                img.onload = function() {
+                    headerImg.style.opacity = '1';
+                }
+            }
+        });
+        
+        // Custom cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorCoords = document.querySelector('.cursor-coords');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            cursorCoords.style.left = e.clientX + 'px';
+            cursorCoords.style.top = e.clientY + 'px';
+            cursorCoords.textContent = `${e.clientX}, ${e.clientY}`;
+        });
+        
+        // Change cursor on hover
+        const hoverElements = document.querySelectorAll('a, button, .header-image');
+        hoverElements.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'translate(-50%, -50%) scale(1.3)';
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'translate(-50%, -50%)';
+            });
+        });
+        
+        // Random text animation with cat symbol
+        function scrambleText(element, finalText) {
+            const chars = "!<>-_\\/[]{}—=+*^?#________🐱";
+            let resolve = null;
+            const promise = new Promise(r => resolve = r);
+            
+            const randomChar = () => {
+                return chars[Math.floor(Math.random() * chars.length)];
+            };
+            
+            let queue = [];
+            
+            for (let i = 0; i < finalText.length; i++) {
+                const from = Math.random() * 10;
+                const to = from + Math.random() * 20 + 10;
+                queue.push({ from, to, char: finalText[i], replaced: false });
+            }
+            
+            let frame = 0;
+            let currentText = Array(finalText.length).fill(' ').join('');
+            
+            function update() {
+                let complete = 0;
+                let output = [];
+                
+                for (let i = 0; i < queue.length; i++) {
+                    let { from, to, char, replaced } = queue[i];
+                    
+                    if (frame >= to && replaced) {
+                        output.push(char);
+                        complete++;
+                        continue;
+                    }
+                    
+                    if (frame >= from) {
+                        if (!replaced && Math.random() < 0.5) {
+                            queue[i].replaced = true;
+                            output.push(char);
+                            complete++;
+                            continue;
+                        }
+                        
+                        output.push(randomChar());
+                    } else {
+                        output.push(' ');
+                    }
+                }
+                
+                element.textContent = output.join('');
+                
+                if (complete < queue.length) {
+                    frame++;
+                    requestAnimationFrame(update);
+                } else {
+                    resolve();
+                }
+            }
+            
+            update();
+            return promise;
+        }
+        
+        // Animate title
+        const title = document.getElementById('animated-title');
+        if (title) {
+            const originalText = title.textContent;
+            title.textContent = '';
+            
+            setTimeout(() => {
+                scrambleText(title, originalText);
+            }, 500);
+        }
+    </script>
+</body>
+</html>
